@@ -1,6 +1,6 @@
 {
-  "name": "ng-table-resizable-columns",
-  "version": "0.1.0",
+  "name": "ngtable-resize-col",
+  "version": "1.0.1",
   "main": [
     "ng-table-resizable-columns.js"
   ],
