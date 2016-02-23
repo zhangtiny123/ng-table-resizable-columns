@@ -1,6 +1,6 @@
 // based on https://github.com/dobtco/jquery-resizable-columns
 angular.module('ngTableResizableColumns', [])
-    .directive('ngTableResizableColumns', function() {
+    .directive('ngTableResizableColumns', ['$timeout',function($timeout) {
 
         var parseWidth = function(node) {
             return parseFloat(node.style.width.replace('px', ''));
@@ -51,11 +51,16 @@ angular.module('ngTableResizableColumns', [])
 
         ResizableColumns.prototype.assignInitWidths = function() {
             var _this = this;
-            return this.$tableHeaders.each(function(_, el) {
+            return this.$tableHeaders.each(function(index, el) {
                 var $el;
                 $el = $(el);
                 if (!$el[0].style.width) {
-                    $el[0].style.width = 180 + 'px';
+                    if (index == 0) {
+                        $el[0].style.width = 50 + 'px';
+                    }
+                    else {
+                        $el[0].style.width = 180 + 'px';
+                    }
                 }
                 else {
                     $el[0].style.width = $el[0].offsetWidth + 'px';
@@ -142,17 +147,23 @@ angular.module('ngTableResizableColumns', [])
 
 
         return {
-            restrict: 'A',
+            restrict: 'EA',
             priority: 999,
             require: 'ngTable',
-            link: function(scope, element, args, ngTable) {
+            link: function(scope, element) {
                 var data;
                 scope.$watch('$data', function() {
                     data.destroy();
                     data = new ResizableColumns(element);
                 });
+                scope.$watch('columns', function() {
+                    $timeout(function(){
+                        data.destroy();
+                        data = new ResizableColumns(element);
+                    }, 100);
+                }, true);
                 data = new ResizableColumns(element);
             }
         };
 
-    });
+    }]);
